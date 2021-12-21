@@ -1,14 +1,15 @@
 import json
+import random
 import traceback
+from math import sqrt
 from typing import List
-
 import pygame
 
 from GraphAlgoInterface import GraphAlgoInterface
 from DiGraph import *
-Black = 0
-White = 255
-Gray = 153
+Black = (0, 0, 0)
+White = (255, 255, 255)
+Gray = (112, 128, 144)
 Max_Val = 10000000
 
 
@@ -33,7 +34,12 @@ class GraphAlgo(GraphAlgoInterface):
         edges = data_dict['Edges']
         for nodes_dict in nodes:
             if nodes_dict.keys().__contains__('pos'):
-                di_graph.add_node(nodes_dict['id'], nodes_dict['pos'])
+                pos = nodes_dict['pos']
+                poslist = pos.split(',')
+                x = float(poslist[0])
+                y = float(poslist[1])
+                z = float(poslist[2])
+                di_graph.add_node(nodes_dict['id'], (x, y, z))
             else:
                 di_graph.add_node(nodes_dict['id'])
         for edges_dict in edges:
@@ -65,7 +71,7 @@ class GraphAlgo(GraphAlgoInterface):
         path = []
         src = self.graph.nodes_dict[id1]
         dest = self.graph.nodes_dict[id2]
-        self.dijkstra(src)
+        self.dijkstra_sp(src, dest)
         if dest.get_dist() == Max_Val:
             return Max_Val, []
         while dest is not None:
@@ -119,16 +125,47 @@ class GraphAlgo(GraphAlgoInterface):
         return node_id, shortest_dist
 
     def plot_graph(self) -> None:
-        WIDTH, HEIGHT = 600, 600
-        WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+        width, height = 1024, 800
+        win = pygame.display.set_mode((width, height))
+        win.fill((135, 206, 250))
+        pygame.display.set_caption("Directed Weighted Graph")
+        self.draw_graph(win)
+
         run = True
         while run:
+            pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-
         pygame.quit()
 
+    def dijkstra_sp(self, src_node: MyNode, dest_node: MyNode):
+        global Max_Val
+        queue = []
+        for node in self.graph.nodes_dict.values():
+            node.set_prev(None)
+            node.set_dist(Max_Val)
+            queue.append(node)
+        src_node.set_dist(0)
+        while len(queue) > 0:
+            min_dist = Max_Val
+            key = -1
+            for node in queue:
+                if node.get_dist() < min_dist:
+                    min_dist = node.get_dist()
+                    key = node.get_id()
+            if key == -1:
+                break
+            u = self.graph.nodes_dict[key]
+            if u == dest_node:
+                break
+            queue.remove(u)
+            for neighbour_index in u.get_out_edges():
+                v = self.graph.nodes_dict[neighbour_index]
+                distance = u.get_dist() + u.get_out_edges()[neighbour_index]
+                if distance < v.get_dist():
+                    v.set_dist(distance)
+                    v.set_prev(u)
 
     def dijkstra(self, src_node: MyNode):
         global Max_Val
@@ -186,3 +223,98 @@ class GraphAlgo(GraphAlgoInterface):
                     v.set_dist(u.get_dist()+1)
                     queue.append(v)
             u.set_tag(Black)
+
+    def draw_graph(self, win: pygame.Surface):
+        max_xy = self.get_max_xy()
+        radius = 5
+        if max_xy == (-1, -1):
+            for node in self.graph.get_all_v().values():
+                pygame.draw.circle(win, node.get_tag(), (random.randrange(1, win.get_width()), random.randrange(1, win.get_height())), 5)
+        else:
+            for node in self.graph.get_all_v().values():
+                if node.get_pos() is not None:
+                    xy = self.get_scaled_xy(win, node.get_pos())
+                    x = xy[0]
+                    y = xy[1]
+                else:
+                    x = random.randrange(0, max_xy[0])
+                    y = random.randrange(0, max_xy[1])
+
+                pygame.draw.circle(win, node.get_tag(), (x, y), radius)
+
+                for dest_index in node.get_out_edges():
+                    dest_node = self.graph.nodes_dict[dest_index]
+                    if dest_node.get_pos() is not None:
+                        dest_xy = self.get_scaled_xy(win, dest_node.get_pos())
+                        dest_x = dest_xy[0]
+                        dest_y = dest_xy[1]
+                    else:
+                        dest_x = random.randrange(0, max_xy[0])
+                        dest_y = random.randrange(0, max_xy[1])
+                    pygame.draw.line(win, (0, 0, 139), (x, y), (dest_x, dest_y))
+                    self.draw_arrow_head(win, x, y, dest_x, dest_y)
+        pygame.display.update()
+
+    def draw_arrow_head(self, win: pygame.surface, x1: float, y1: float, x2: float, y2: float) -> None:
+        arrow_width = 15
+        arrow_height = 2
+        diff_x = x2 - x1
+        diff_y = y2 - y1
+        D = sqrt(diff_x*diff_x + diff_y*diff_y)
+        xm = D - arrow_width
+        xn = xm
+        ym = arrow_height
+        yn = -arrow_height
+
+        sin = diff_y / D
+        cos = diff_x / D
+
+        x = xm*cos - ym*sin + x1
+        ym = xm*sin + ym*cos + y1
+        xm = x
+
+        x = xn*cos - yn*sin + x1
+        yn = xn*sin + yn*cos + y1
+        xn = x
+
+        points = ((x2, y2), (xm, ym), (xn, yn))
+
+        pygame.draw.line(win,(0, 0, 139), (x1, y1), (x2, y2))
+        pygame.draw.polygon(win, (0, 0, 139), points)
+
+    def get_max_xy(self) -> ():
+        x = -1
+        y = -1
+        for node in self.graph.get_all_v().values():
+            if node.get_pos() is None:
+                continue
+            else:
+                if node.get_pos()[0] > x:
+                    x = node.get_pos()[0]
+                if node.get_pos()[1] > y:
+                    y = node.get_pos()[1]
+        return x, y
+
+    def get_min_xy(self):
+        x = Max_Val
+        y = Max_Val
+        for node in self.graph.get_all_v().values():
+            if node.get_pos() is None:
+                continue
+            else:
+                if node.get_pos()[0] < x:
+                    x = node.get_pos()[0]
+                if node.get_pos()[1] < y:
+                    y = node.get_pos()[1]
+        return x, y
+
+    def get_scaled_xy(self, win: pygame.Surface, coordinates : ()) -> ():
+        max_xy = self.get_max_xy()
+        min_xy = self.get_min_xy()
+        wide_factor_x = win.get_width() / (max_xy[0] - min_xy[0])
+        wide_factor_y = win.get_height() / (max_xy[1] - min_xy[1])
+        x = (((coordinates[0] - min_xy[0]) * wide_factor_x)*0.65)+150
+        y = (((coordinates[1] - min_xy[1]) * wide_factor_y)*0.65)+100
+        return x, y
+
+

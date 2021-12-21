@@ -1,3 +1,7 @@
+Black = (0, 0, 0)
+White = (255, 255, 255)
+Gray = (112, 128, 144)
+
 
 class MyNode:
 
@@ -5,7 +9,7 @@ class MyNode:
         self.id: int = node_id
         self.in_edges: {int, float} = {}
         self.out_edges: {int, float} = {}
-        self.tag = 255
+        self.tag = White
         self.dist = 0
         self.pos = pos
         self.prev = None
@@ -22,7 +26,7 @@ class MyNode:
     def get_tag(self):
         return self.tag
 
-    def set_tag(self, color: int):
+    def set_tag(self, color: tuple):
         self.tag = color
 
     def get_dist(self):

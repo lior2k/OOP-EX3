@@ -36,10 +36,12 @@ class TestGraphAlgo(TestCase):
 
 
     def test_shortest_path_1k_nodes(self):
-        self.fail()
+        dist, path = Algo.shortest_path(25, 32)
+        self.assertEqual(dist, 235)
 
     def test_center_point_1k_nodes(self):
-        Algo.centerPoint()
+        id, dist = Algo.centerPoint()
+        self.assertEqual(id, 362)
 
     def test_TSP_1k_nodes(self):
         self.fail()
