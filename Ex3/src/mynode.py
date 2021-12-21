@@ -1,11 +1,14 @@
 
 class MyNode:
 
-    def __init__(self, node_id: int):
-        self.id = node_id
-        self.location = None
-        self.in_edges = {}
-        self.out_edges = {}
+    def __init__(self, node_id: int, pos: tuple = None):
+        self.id: int = node_id
+        self.in_edges: {int, float} = {}
+        self.out_edges: {int, float} = {}
+        self.tag = 255
+        self.dist = 0
+        self.pos = pos
+        self.prev = None
 
     def get_in_edges(self) -> dict:
         return self.in_edges
@@ -15,6 +18,27 @@ class MyNode:
 
     def get_id(self) -> int:
         return self.id
+
+    def get_tag(self):
+        return self.tag
+
+    def set_tag(self, color: int):
+        self.tag = color
+
+    def get_dist(self):
+        return self.dist
+
+    def set_dist(self, dist: float):
+        self.dist = dist
+
+    def get_pos(self):
+        return self.pos
+
+    def get_prev(self):
+        return self.prev
+
+    def set_prev(self, node):
+        self.prev = node
 
     def add_edge(self, src: int, dest: int, weight: float):
         if src == self.id:
@@ -29,10 +53,9 @@ class MyNode:
             return self.in_edges.pop(src)
 
     def copy(self):
-        n = MyNode(self.get_id())
+        n = MyNode(self.get_id(), self.pos)
         n.out_edges = self.out_edges.copy()
         n.in_edges = self.in_edges.copy()
-        n.location = self.location
         return n
 
     def __str__(self):
@@ -40,3 +63,9 @@ class MyNode:
 
     def __repr__(self):
         return f"out edges: {self.out_edges} in edges: {self.in_edges}"
+
+    def __eq__(self, other):
+        if isinstance(other, MyNode):
+            if other.get_id() == self.get_id():
+                return True
+        return False

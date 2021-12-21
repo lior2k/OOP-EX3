@@ -1,11 +1,11 @@
 from mynode import MyNode
-from GraphInterface import *
+from GraphInterface import GraphInterface
 
 
 class DiGraph(GraphInterface):
 
     def __init__(self):
-        self.graph = {}
+        self.nodes_dict = {}
         self.node_size = 0
         self.edge_size = 0
         self.mc = 0
@@ -20,52 +20,52 @@ class DiGraph(GraphInterface):
         return self.mc
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
-        if self.graph.keys().__contains__(id1) and self.graph.keys().__contains__(id2):
-            self.graph[id1].add_edge(id1, id2, weight)
-            self.graph[id2].add_edge(id1, id2, weight)
+        if self.nodes_dict.keys().__contains__(id1) and self.nodes_dict.keys().__contains__(id2):
+            self.nodes_dict[id1].add_edge(id1, id2, weight)
+            self.nodes_dict[id2].add_edge(id1, id2, weight)
             self.mc += 1
             self.edge_size += 1
             return True
         return False
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
-        if self.graph.keys().__contains__(node_id):
+        if self.nodes_dict.keys().__contains__(node_id):
             return False
-        n = MyNode(node_id)
-        self.graph[node_id] = n
+        n = MyNode(node_id, pos)
+        self.nodes_dict[node_id] = n
         self.mc += 1
         self.node_size += 1
         return True
 
     def remove_node(self, node_id: int) -> bool:
-        if self.graph.keys().__contains__(node_id):
-            for dest in self.graph.get(node_id).get_out_edges().keys:
-                temp = self.graph[dest]
+        if self.nodes_dict.keys().__contains__(node_id):
+            for dest in self.nodes_dict.get(node_id).get_out_edges():
+                temp = self.nodes_dict[dest]
                 temp.get_in_edges().pop(node_id)
-            self.graph.pop(node_id)
+            self.nodes_dict.pop(node_id)
             self.mc += 1
             self.node_size -= 1
             return True
         return False
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
-        if self.graph.keys().__contains__(node_id1) and self.graph.keys().__contains__(node_id2):
-            if self.graph.get(node_id1).get_out_edges().__contains__(node_id2) and self.graph.get(node_id2).get_in_edges().__contains__(node_id1):
-                self.graph.get(node_id1).get_out_edges().pop(node_id2)
-                self.graph.get(node_id2).get_in_edges().pop(node_id1)
+        if self.nodes_dict.keys().__contains__(node_id1) and self.nodes_dict.keys().__contains__(node_id2):
+            if self.nodes_dict.get(node_id1).get_out_edges().__contains__(node_id2) and self.nodes_dict.get(node_id2).get_in_edges().__contains__(node_id1):
+                self.nodes_dict.get(node_id1).get_out_edges().pop(node_id2)
+                self.nodes_dict.get(node_id2).get_in_edges().pop(node_id1)
                 self.mc += 1
                 self.edge_size -= 1
                 return True
         return False
 
     def get_all_v(self) -> dict:
-        return self.graph
+        return self.nodes_dict
 
     def all_in_edges_of_node(self, id1: int) -> dict:
-        return self.graph[id1].get_in_edges()
+        return self.nodes_dict[id1].get_in_edges()
 
     def all_out_edges_of_node(self, id1: int) -> dict:
-        return self.graph[id1].get_out_edges()
+        return self.nodes_dict[id1].get_out_edges()
 
     def __str__(self):
-        return f"node size: {self.node_size} edge size: {self.edge_size} nodes dict: {self.graph}"
+        return f"|V|={self.node_size} |E|={self.edge_size}"
