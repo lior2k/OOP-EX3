@@ -62,6 +62,11 @@ class MyNode:
         n.in_edges = self.in_edges.copy()
         return n
 
+    def reverse(self):
+        dict_copy = self.out_edges.copy()
+        self.out_edges = self.in_edges
+        self.in_edges = dict_copy
+
     def __str__(self):
         return f"out edges: {self.out_edges} in edges: {self.in_edges}"
 

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from src.GraphAlgo import GraphAlgo
 Algo = GraphAlgo()
-Algo.load_from_json('../data/1000Nodes.json')
+Algo.load_from_json('../data/1k_nodes.json')
 
 
 class TestGraphAlgo(TestCase):
@@ -35,16 +35,16 @@ class TestGraphAlgo(TestCase):
     #     self.assertEqual(dist, 22.180370618918296)
 
 
-    def test_shortest_path_1k_nodes(self):
-        dist, path = Algo.shortest_path(25, 32)
-        self.assertEqual(dist, 235)
-
+    # def test_shortest_path_1k_nodes(self):
+    #     dist, path = Algo.shortest_path(25, 32)
+    #     self.assertEqual(dist, 235)
+    #
     def test_center_point_1k_nodes(self):
         id, dist = Algo.centerPoint()
         self.assertEqual(id, 362)
-
-    def test_TSP_1k_nodes(self):
-        self.fail()
+    #
+    # def test_TSP_1k_nodes(self):
+    #     self.fail()
 
 
     # def test_shortest_path_10k_nodes(self):
@@ -55,6 +55,8 @@ class TestGraphAlgo(TestCase):
     #
     # def test_TSP_10k_nodes(self):
     #     self.fail()
+    # def test_isConnected_10k_nodes(self):
+    #     Algo.is_connected()
 
 
     # def test_shortest_path_100k_nodes(self):
@@ -65,6 +67,8 @@ class TestGraphAlgo(TestCase):
     #
     # def test_TSP_100k_nodes(self):
     #     self.fail()
+    # def test_isConnected_100k_nodes(self):
+    #     Algo.is_connected()
 
 
     # def test_shortest_path_1M_nodes(self):
