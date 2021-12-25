@@ -101,6 +101,9 @@ class GraphAlgo(GraphAlgoInterface):
                 break
             n2 = self.graph.get_all_v()[node_lst[0]]
             dist, path = self.shortest_path(n1.get_id(), n2.get_id())
+            if dist == Max_Val:
+                node_lst.append(n1.get_id())
+                continue
             total_dist += dist
             for intersection in path:
                 if ans.__contains__(intersection) and intersection is not n2.get_id():
@@ -129,7 +132,7 @@ class GraphAlgo(GraphAlgoInterface):
     def plot_graph(self) -> None:
         width, height = 1024, 800
         win = pygame.display.set_mode((width, height))
-        win.fill((135, 206, 250))
+        win.fill(Gray)
         pygame.display.set_caption("Directed Weighted Graph")
         pygame.font.init()
         self.draw_graph(win)
