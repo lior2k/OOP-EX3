@@ -13,5 +13,9 @@ We represent the graph using a dictionary, the keys of the dictionary are the ve
 | DiGraph | Represents the Directed Weighted Graph |
 | GraphAlgo | Holds a DiGraph to run desired algorithms on |
 
-GUI Example:
+## GUI Example
 ![image](https://i.imgur.com/s8MhtOM.png)
+
+
+## UML
+![uml](https://i.imgur.com/51xr2pf.png)
