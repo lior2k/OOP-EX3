@@ -1,3 +1,5 @@
+import random
+
 from mynode import MyNode
 from GraphInterface import GraphInterface
 
@@ -31,6 +33,10 @@ class DiGraph(GraphInterface):
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         if self.nodes_dict.keys().__contains__(node_id):
             return False
+        if pos is None:
+            x = random.random() * 800
+            y = random.random() * 600
+            pos = (x, y, 0)
         n = MyNode(node_id, pos)
         self.nodes_dict[node_id] = n
         self.mc += 1
