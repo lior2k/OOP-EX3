@@ -67,11 +67,17 @@ class MyNode:
         self.out_edges = self.in_edges
         self.in_edges = dict_copy
 
+    # def __str__(self):
+    #     return f"out edges: {self.out_edges} in edges: {self.in_edges}"
+    #
+    # def __repr__(self):
+    #     return f"out edges: {self.out_edges} in edges: {self.in_edges}"
+
     def __str__(self):
-        return f"out edges: {self.out_edges} in edges: {self.in_edges}"
+        return f"{self.id}: |edges_out| {len(self.out_edges)} |edges_in| {len(self.in_edges)}"
 
     def __repr__(self):
-        return f"out edges: {self.out_edges} in edges: {self.in_edges}"
+        return f"{self.id}: |edges_out| {len(self.out_edges)} |edges_in| {len(self.in_edges)}"
 
     def __eq__(self, other):
         if isinstance(other, MyNode):
