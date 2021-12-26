@@ -1,4 +1,5 @@
 import json
+import math
 import random
 import traceback
 from math import sqrt
@@ -9,7 +10,7 @@ from DiGraph import *
 Black = (0, 0, 0)
 White = (255, 255, 255)
 Gray = (112, 128, 144)
-Max_Val = 10000000
+Max_Value = math.inf
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -74,8 +75,8 @@ class GraphAlgo(GraphAlgoInterface):
         src = self.graph.get_all_v()[id1]
         dest = self.graph.get_all_v()[id2]
         self.dijkstra(src)
-        if dest.get_dist() == Max_Val:
-            return Max_Val, []
+        if dest.get_dist() == Max_Value:
+            return Max_Value, []
         while dest is not None:
             path.append(dest.get_id())
             dest = dest.get_prev()
@@ -83,10 +84,10 @@ class GraphAlgo(GraphAlgoInterface):
         return self.graph.get_all_v()[id2].get_dist(), path
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
-        global White, Gray, Black, Max_Val
+        global White, Gray, Black, Max_Value
         total_dist = 0
-        for node in self.graph.get_all_v().values():
-            node.set_tag(White)
+        for node_index in node_lst:
+            self.graph.get_all_v()[node_index].set_tag(White)
         ans = []
         while len(node_lst) > 0:
             if len(node_lst) == 1:
@@ -96,13 +97,21 @@ class GraphAlgo(GraphAlgoInterface):
                 n = self.graph.get_all_v()[node_index]
                 if n.get_tag() == Black:
                     node_lst.remove(node_index)
+            flag = 0
+            for node_index in node_lst:
+                n = self.graph.get_all_v()[node_index]
+                if n.get_tag() == Gray:
+                    flag += 1
+            if flag == len(node_lst):
+                return [], Max_Value
             n1 = self.graph.get_all_v()[node_lst.pop(0)]
             if len(node_lst) == 0:
                 break
             n2 = self.graph.get_all_v()[node_lst[0]]
             dist, path = self.shortest_path(n1.get_id(), n2.get_id())
-            if dist == Max_Val:
+            if dist == Max_Value:
                 node_lst.append(n1.get_id())
+                n1.set_tag(Gray)
                 continue
             total_dist += dist
             for intersection in path:
@@ -113,10 +122,10 @@ class GraphAlgo(GraphAlgoInterface):
         return ans, total_dist
 
     def centerPoint(self) -> (int, float):
-        global Max_Val
+        global Max_Value
         if not self.is_connected():
-            return -1, Max_Val
-        shortest_dist = Max_Val
+            return -1, Max_Value
+        shortest_dist = Max_Value
         node_id = -1
         for node in self.graph.get_all_v().values():
             self.dijkstra(node)
@@ -130,7 +139,7 @@ class GraphAlgo(GraphAlgoInterface):
         return node_id, shortest_dist
 
     def plot_graph(self) -> None:
-        width, height = 1024, 800
+        width, height = 800, 600
         win = pygame.display.set_mode((width, height))
         win.fill(Gray)
         pygame.display.set_caption("Directed Weighted Graph")
@@ -173,15 +182,15 @@ class GraphAlgo(GraphAlgoInterface):
     #                 v.set_prev(u)
 
     def dijkstra(self, src_node: MyNode):
-        global Max_Val
+        global Max_Value
         queue = {}
         for node in self.graph.get_all_v().values():
             node.set_prev(None)
-            node.set_dist(Max_Val)
+            node.set_dist(Max_Value)
             queue[node.get_id()] = node
         src_node.set_dist(0)
         while len(queue) > 0:
-            min_dist = Max_Val
+            min_dist = Max_Value
             key = -1
             for node in queue.values():
                 if node.get_dist() < min_dist:
@@ -218,10 +227,10 @@ class GraphAlgo(GraphAlgoInterface):
         return True
 
     def bfs(self, s: MyNode):
-        global White, Black, Gray, Max_Val
+        global White, Black, Gray, Max_Value
         for node in self.graph.get_all_v().values():
             node.set_tag(White)
-            node.set_dist(Max_Val)
+            node.set_dist(Max_Value)
         s.set_tag(Gray)
         s.set_dist(0)
         queue = [s]
@@ -342,8 +351,8 @@ class GraphAlgo(GraphAlgoInterface):
         return x, y
 
     def get_min_xy(self):
-        x = Max_Val
-        y = Max_Val
+        x = Max_Value
+        y = Max_Value
         for node in self.graph.get_all_v().values():
             if node.get_pos() is None:
                 continue
@@ -362,3 +371,18 @@ class GraphAlgo(GraphAlgoInterface):
         x = (((coordinates[0] - min_xy[0]) * wide_factor_x)*0.65)+150
         y = (((coordinates[1] - min_xy[1]) * wide_factor_y)*0.65)+100
         return x, y
+
+    def init_random_graph(self, nodes_amount: int, out_edges_per_node: int):
+        graph = DiGraph()
+        i = 0
+        while i < nodes_amount:
+            graph.add_node(i)
+            i += 1
+        i = 0
+        while i < nodes_amount:
+            k = 0
+            while k < out_edges_per_node:
+                graph.add_edge(i, random.randrange(1, nodes_amount), random.randrange(1, 10))
+                k += 1
+            i += 1
+        self.__init__(graph)

@@ -18,11 +18,11 @@ class TestMyNode(TestCase):
         self.assertEqual(n.get_id(), 0)
 
     def test_get_tag(self):
-        self.assertEqual(n.get_tag(), 255)
+        self.assertEqual(n.get_tag(), (255, 255, 255))
 
     def test_set_tag(self):
-        n.set_tag(0)
-        self.assertEqual(n.get_tag(), 0)
+        n.set_tag((130, 140, 200))
+        self.assertEqual(n.get_tag(), (130, 140, 200))
 
     def test_get_dist(self):
         self.assertEqual(n.get_dist(), 0)
