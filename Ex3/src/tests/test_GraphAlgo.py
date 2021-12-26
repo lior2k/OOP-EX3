@@ -16,7 +16,7 @@ class TestGraphAlgo(TestCase):
         self.assertEqual(A5_Algo.get_graph().e_size(), 166)
 
     def test_load_from_json(self):
-        self.assertEqual(A5_Algo.load_from_json('../tests/A5.json'), True)
+        self.assertEqual(A5_Algo.load_from_json('../A5.json'), True)
 
     def test_save_to_json(self):
         self.assertEqual(A5_Algo.save_to_json('../A5.json'), True)

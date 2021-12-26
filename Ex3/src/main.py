@@ -1,3 +1,5 @@
+import sys
+
 from DiGraph import DiGraph
 from GraphAlgo import GraphAlgo
 
@@ -107,6 +109,17 @@ def check3():
     g_algo.plot_graph()
 
 
+def check4(nodes: int, edges: int):
+    g_algo = GraphAlgo()
+    g_algo.init_random_graph(nodes, edges)
+    print('center: ', g_algo.centerPoint())
+    print('isConnected: ', g_algo.is_connected())
+    g_algo.plot_graph()
+
+
 if __name__ == '__main__':
     check()
-
+    if len(sys.argv) > 1:
+        nodes_amount = sys.argv[1]
+        edges_per_node = sys.argv[2]
+        check4(int(nodes_amount), int(edges_per_node))

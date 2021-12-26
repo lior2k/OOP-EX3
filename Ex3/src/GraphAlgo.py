@@ -123,7 +123,7 @@ class GraphAlgo(GraphAlgoInterface):
     def centerPoint(self) -> (int, float):
         global Max_Value
         if not self.is_connected():
-            return -1, Max_Value
+            return None, Max_Value
         shortest_dist = Max_Value
         node_id = -1
         for node in self.graph.get_all_v().values():
@@ -306,7 +306,7 @@ class GraphAlgo(GraphAlgoInterface):
         while i < nodes_amount:
             k = 0
             while k < out_edges_per_node:
-                graph.add_edge(i, random.randrange(1, nodes_amount), random.randrange(1, 10))
+                graph.add_edge(i, random.randrange(0, nodes_amount), random.randrange(1, 10))
                 k += 1
             i += 1
         self.__init__(graph)
